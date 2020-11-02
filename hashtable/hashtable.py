@@ -98,6 +98,7 @@ class HashTable:
 
         Implement this.
         """
+        self.load += 1
         index = self.hash_index(key)
         item = HashTableEntry(key, value)
         if self.storage[index] is not None:
@@ -113,8 +114,9 @@ class HashTable:
             node.next = item
         else:
             self.storage[index] = item
-        # self.storage[index] = item
 
+        if self.get_load_factor() > 0.7:
+            self.resize(self.capacity * 2)
 
 
 
@@ -131,13 +133,11 @@ class HashTable:
         prev = None
 
         while node is not None:
-            print(node.value)
-            print(node.next)
             if node.key == key:
                 if prev is not None:
                     prev.next = node.next
                 else:
-                    self.storage[i] = None
+                    self.storage[i] = node.next
                 return
             else:
                 prev = node
