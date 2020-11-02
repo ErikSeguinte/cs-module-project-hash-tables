@@ -7,6 +7,9 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
+    def __eq__(self, other):
+        if self.key == other.key: return True
+
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -58,8 +61,8 @@ class HashTable:
 
         Implement this, and/or DJB2.
         """
-        offset = 14695981039346656037
-        prime = 2**40 + 2**8 + 0xb3
+        offset = 0xcbf29ce484222325
+        prime = 0x100000001b3
 
         hash = offset
 
@@ -97,14 +100,20 @@ class HashTable:
         """
         index = self.hash_index(key)
         item = HashTableEntry(key, value)
-        # if self.storage[index] is not None:
-        #     node: HashTableEntry = self.storage[index] 
-        #     while node.next:
-        #         node = node.next
-        #     node.next = item
-        # else:
-        #     self.storage[index] = item
-        self.storage[index] = item
+        if self.storage[index] is not None:
+            if self.storage[index].key == key:
+                self.storage[index].value = value
+                return
+            node: HashTableEntry = self.storage[index] 
+            while node.next is not None:
+                node = node.next
+                if node.key == key:
+                    node.value = value
+                    return
+            node.next = item
+        else:
+            self.storage[index] = item
+        # self.storage[index] = item
 
 
 
@@ -118,7 +127,21 @@ class HashTable:
         Implement this.
         """
         i = self.hash_index(key)
-        self.storage[i] = None
+        node = self.storage[i]
+        prev = None
+
+        while node is not None:
+            print(node.value)
+            print(node.next)
+            if node.key == key:
+                if prev is not None:
+                    prev.next = node.next
+                else:
+                    self.storage[i] = None
+                return
+            else:
+                prev = node
+                node = node.next
 
 
     def get(self, key):
@@ -149,6 +172,14 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        old_table = self.storage
+        self.storage = [None] * new_capacity
+        self.capacity = new_capacity
+        for e in old_table:
+            if e is not None:
+                k, v = e.key, e.value
+                self.put(k, v)
+        
 
 
 
