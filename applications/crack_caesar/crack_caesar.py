@@ -5,7 +5,7 @@
 
 from pathlib import Path
 
-path = "cs-module-project-hash-tables/applications/crack_caesar/ciphertext.txt"
+path = "applications/crack_caesar/ciphertext.txt"
 
 with open(path, "r") as f:
     cypher = f.read()
